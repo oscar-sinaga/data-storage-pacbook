@@ -26,4 +26,4 @@ Ada beberapa metrik analytics yang user atau stakeholders akan explore pada data
 ### Solusi yang ditawarkan
 
 **Data Warehouse**: Membangun data warehouse untuk menyimpan data khusus untuk tujuan analitis, terpisah dari data transaksi harian. Database akan mencakup semua yang ada di requirements gathering dan merekam setiap perubahan yang terjadi pada data-data tertentu.
-**ELT-Pipeline** : Membangun alur data pipeline mulai dari extract data dari sumber , me-load datanya ke data warehouse dan kemudian transformasi datanya menjadi bentuk yang cocok dan mudah untuk dianalisis. Proses ELT ini nantinya akan dilakukan secara otomatis dan berkala.
+**ELT-Pipeline** : Membangun alur data pipeline mulai dari extract data dari sumber , me-load datanya ke data warehouse dan kemudian transformasi datanya menjadi bentuk yang cocok dan mudah untuk dianalisis. Proses ELT ini nantinya akan dilakukan secara otomatis dan berkala
