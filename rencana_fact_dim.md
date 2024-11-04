@@ -11,23 +11,6 @@
 - last_name
 - email
 
-### Table customer_address
-
-- customer_id (relate to customer)
-- address_id
-- status_id
-
-### Table address
-
-- address_id (relate to customer_address)
-- city
-- counytry_id (relate to country)
-
-### Table country
-
-- counytry_id (relate to address)
-- country_name
-
 ## dim_book
 
 - book_id (PK)
