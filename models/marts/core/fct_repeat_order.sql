@@ -22,9 +22,9 @@ with dim_customer as (
     FROM {{ref("dim_customer")}}
 )
 
-final_fct_repeat_order as (
+final_fct_order_repeat_time as (
     SELECT
-        {{ dbt_utils.generate_surrogate_key(["nk_order_id"]) }} AS sk_repeat_order_time_id,
+        {{ dbt_utils.generate_surrogate_key(["nk_order_id"]) }} AS sk_order_repeat_time_id,
         dc.sk_customer_id,
         sro.nk_customer_id,
         sro.nk_order_id,
@@ -33,5 +33,7 @@ final_fct_repeat_order as (
         sro.order_interval
     FROM stg_repeat_order as sro
     INNER JOIN dim_customer as dc
-        using sro.nk_customer_id = dc.nk_customer_id
+        using(nk_customer_id)
 )
+
+SELECT * from final_fct_order_repeat_time;

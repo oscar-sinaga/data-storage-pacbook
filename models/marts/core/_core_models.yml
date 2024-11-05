@@ -1,0 +1,221 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Dimension table for customers"
+    columns:
+      - name: sk_customer_id
+        description: "Surrogate key for customer ID"
+        tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key
+      - name: nk_customer_id
+        description: "Natural key for customer ID"
+        tests:
+          - not_null
+      - name: full_name
+        description: "Full name of the customer"
+        tests:
+          - not_null
+      - name: email
+        description: "Email address of the customer"
+
+  - name: dim_book
+    description: "Dimension table for books"
+    columns:
+      - name: sk_book_id
+        description: "Surrogate key for book ID"
+        tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key
+      - name: nk_book_id
+        description: "Natural key for book ID"
+        tests:
+          - not_null
+      - name: title
+        description: "Title of the book"
+        tests:
+          - not_null
+      - name: isbn13
+        description: "ISBN number of the book"
+        tests:
+          - not_null
+      - name: num_pages
+        description: "Number of pages of the book"
+        tests:
+          - not_null
+      - name: publication_date
+        description: "Publication date of the book"
+        tests:
+          - not_null
+      - name: language
+        description: "Language of the book"
+        tests:
+          - not_null
+      - name: publisher
+        description: "Publisher of the book"
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: "Dimension table for date"
+    columns:
+      - name: date_day
+        description: "The date of the day"
+        tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key
+  
+  - name: fct_book_order
+    description: "Fact table for book orders"
+    columns:
+      - name: sk_order_id
+        description: "Surrogate key for order ID"
+        tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key
+      - name: nk_order_id
+        description: "Natural key for order ID"
+        tests:
+          - not_null
+      - name: sk_customer_id
+        description: "Foreign key for customer ID from dim_customer"
+        tests:
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('dim_customer')
+              pk_column_name: sk_customer_id
+      - name: sk_book_id
+        description: "Foreign key for book ID from dim_book"
+        tests:
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('dim_book')
+              pk_column_name: sk_book_id
+      - name: order_date
+        description: "Date of the order and foreign key for order_date from dim_date"
+        tests:
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('dim_date')
+              pk_column_name: date_day
+      - name: price
+        description: "Price of the ordered book"
+        tests:
+          - not_null
+          - greater_than: 0
+      - name: shipping_method
+        description: "Shipping method of the order"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Standard', 'Priority', 'Express', 'International']
+      - name: shipping_cost
+        description: "Shipping cost of the order"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [5.9, 8.9, 11.9, 24.5]
+      - name: status
+        description: "The last status of the order"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Order Received', 'Pending Delivery', 'Delivery In Progress', 'Delivered', 'Cancelled', 'Returned']
+      - name: status_date
+        description: "Date of the latest status of the order"
+        tests:
+          - not_null
+      - name: dest_address
+        description: "Destination address of the order"
+        tests:
+          - not_null
+      - name: dest_city
+        description: "Destination city of the order"
+        tests:
+          - not_null
+      - name: dest_country
+        description: "Destination country of the order"
+        tests:
+          - not_null
+
+  - name: fct_monthly_order
+    description: "Fact table for monthly orders"
+    columns:
+      - name: sk_monthly_order_id
+        description: "Surrogate key for monthly order ID genereted from month, year, and sk_book_id"
+        tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key
+      - name: month
+        description: "Month in which the transaction or record was generated"
+        tests:
+          - not_null
+      - name: year
+        description: "Year in which the transaction or record was generated"
+        tests:
+          - not_null
+      - name: sk_book_id
+        description: "Foreign key for book ID from dim_book"
+        tests:
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('dim_book')
+              pk_column_name: sk_book_id
+      - name: total_order
+        description: "Total number of orders placed by the customer."
+        tests:
+          - not_null
+          - greater_than:
+              min_value: 0
+
+  - name: fct_order_repeat_time
+  description: "Fact table to measure intervals between repeat orders for each customer"
+  columns:
+    - name: sk_order_repeat_time_id
+      description: "Surrogate key uniquely identifying each record in fct_order_repeat_time"
+      tests:
+        - unique
+        - not_null
+        - dbt_constraints.primary_key
+
+    - name: sk_customer_id
+      description: "Surrogate key linking to the customer dimension table"
+      tests:
+        - not_null
+
+    - name: nk_customer_id
+      description: "Natural key linking to the customer's unique identifier in dim_customer"
+      tests:
+        - not_null
+        - dbt_constraints.foreign_key:
+            pk_table_name: ref('dim_customer')
+            pk_column_name: nk_customer_id
+
+    - name: nk_order_id
+      description: "Natural key linking to the unique identifier for each order"
+      tests:
+        - not_null
+
+    - name: order_date
+      description: "Date of the current order"
+      tests:
+        - not_null
+
+    - name: previous_order_date
+      description: "Date of the customer's previous order"
+      tests:
+        - not_null
+
+    - name: order_interval
+      description: "Number of days between the current and previous order"
+      tests:
+        - not_null
+        - dbt_constraints.check:
+            expression: "order_interval >= 0"  # Ensures that interval values are positive
+
