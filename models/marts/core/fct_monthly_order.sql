@@ -3,12 +3,12 @@ WITH stg_monthly_order AS (
         EXTRACT(MONTH FROM order_date::date) AS month,
         EXTRACT(YEAR FROM order_date::date) AS year,
         order_id as nk_order_id
-    FROM {{ ref("stg_dwh_cust_order") }}
+    FROM {{ ref("stg_pacbook_cust_order") }}
 ),
 
 stg_order_line AS (
     SELECT *
-    FROM {{ ref("stg_dwh_order_line") }}
+    FROM {{ ref("stg_pacbook_order_line") }}
 ),
 
 dim_book AS (
