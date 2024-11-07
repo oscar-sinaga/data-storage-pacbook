@@ -23,6 +23,7 @@ final_monthly_order AS (
         smo.year,
         db.sk_book_id,
         COUNT(smo.nk_order_id) AS total_order,
+        SUM(sol.price) AS total_sale_amount,
         {{ dbt_date.now() }} AS created_at,
         {{ dbt_date.now() }} AS updated_at
     FROM

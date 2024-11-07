@@ -66,7 +66,7 @@ dim_date AS (
 
 final_fct_book_order AS (
     SELECT
-        {{ dbt_utils.generate_surrogate_key(["nk_order_id"]) }} AS sk_order_id,
+        {{ dbt_utils.generate_surrogate_key(["nk_order_id"]) }} AS sk_book_order_id,
         sco.nk_order_id,
         dd.date_day AS order_date,
         dc.sk_customer_id,
