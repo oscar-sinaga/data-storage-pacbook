@@ -3,16 +3,14 @@ from datetime import datetime
 import logging
 import time
 import pandas as pd
-from pipeline.utils.db_conn import db_connection
+from pipeline.utils.root_dir import ROOT_DIR
+from pipeline.utils.tables_src import tables
 from pipeline.utils.read_sql import read_sql_file
 import os
 
+
 # Define DIR
-DIR_ROOT_PROJECT = os.getenv("DIR_ROOT_PROJECT")
-DIR_TEMP_LOG = os.getenv("DIR_TEMP_LOG")
-DIR_TEMP_DATA = os.getenv("DIR_TEMP_DATA")
-DIR_EXTRACT_QUERY = os.getenv("DIR_EXTRACT_QUERY")
-DIR_LOG = os.getenv("DIR_LOG")
+ROOT_DIR = os.getenv("ROOT_DIR")
 
 class Extract(luigi.Task):
     
