@@ -1,119 +1,68 @@
-import luigi
-from datetime import datetime
-import logging
 import time
+import luigi
+import datetime
+import traceback
 import pandas as pd
-from pipeline.utils.root_dir import ROOT_DIR
-from pipeline.utils.tables_src import tables
-from pipeline.utils.read_sql import read_sql_file
-import os
+from .utils.db_conn import src_db_connection
+from .utils.log_config import log_config
+from .utils.tables_src import tables
+from .utils.root_dir import ROOT_DIR
 
-
-# Define DIR
-ROOT_DIR = os.getenv("ROOT_DIR")
+# class GlobalParams(luigi.Config):
+#     CurrentTimestampParams = luigi.DateSecondParameter(default=datetime.datetime.now())
 
 class Extract(luigi.Task):
     
-    # Define tables to be extracted from db sources
-    tables_to_extract = ['address_status', 
-                         'address', 
-                         'author', 
-                         'book_author', 
-                         'book_language', 
-                         'book',
-                         'country',
-                         'cust_order',
-                         'customer_address',
-                         'customer',
-                         'order_history',
-                         'order_line',
-                         'order_status',
-                         'publisher',
-                         'shipping_method']
-    
+   # Definisikan parameter
+    current_timestamp = luigi.Parameter()
+    # self.current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     def requires(self):
         pass
 
-
-    def run(self):        
-        try:
-            # Configure logging
-            logging.basicConfig(filename = f'{DIR_TEMP_LOG}/logs.log', 
-                                level = logging.INFO, 
-                                format = '%(asctime)s - %(levelname)s - %(message)s')
-            
-            # Define db connection engine
-            src_engine, _ = db_connection()
-            
-            # Define the query using the SQL content
-            extract_query = read_sql_file(
-                file_path = f'{DIR_EXTRACT_QUERY}/all-tables.sql'
-            )
-            
-            start_time = time.time()  # Record start time
-            logging.info("==================================STARTING EXTRACT DATA=======================================")
-            
-            for _, table_name in enumerate(self.tables_to_extract):
-                try:
-                    # Read data into DataFrame
-                    df = pd.read_sql_query(extract_query.format(table_name = table_name), src_engine)
-
-                    # Write DataFrame to CSV
-                    df.to_csv(f"{DIR_TEMP_DATA}/{table_name}.csv", index=False)
-                    
-                    logging.info(f"EXTRACT '{table_name}' - SUCCESS.")
-                    
-                except Exception:
-                    logging.error(f"EXTRACT '{table_name}' - FAILED.")  
-                    raise Exception(f"Failed to extract '{table_name}' tables")
-            
-            logging.info(f"Extract All Tables From Sources - SUCCESS")
-            
-            end_time = time.time()  # Record end time
-            execution_time = end_time - start_time  # Calculate execution time
-            
-            # Get summary
-            summary_data = {
-                'timestamp': [datetime.now()],
-                'task': ['Extract'],
-                'status' : ['Success'],
-                'execution_time': [execution_time]
-            }
-            
-            # Get summary dataframes
-            summary = pd.DataFrame(summary_data)
-            
-            # Write DataFrame to CSV
-            summary.to_csv(f"{DIR_TEMP_DATA}/extract-summary.csv", index = False)
-                    
-        except Exception:   
-            logging.info(f"Extract All Tables From Sources - FAILED")
-             
-            # Get summary
-            summary_data = {
-                'timestamp': [datetime.now()],
-                'task': ['Extract'],
-                'status' : ['Failed'],
-                'execution_time': [0]
-            }
-            
-            # Get summary dataframes
-            summary = pd.DataFrame(summary_data)
-            
-            # Write DataFrame to CSV
-            summary.to_csv(f"{DIR_TEMP_DATA}/extract-summary.csv", index = False)
-            
-            # Write exception
-            raise Exception(f"FAILED to execute EXTRACT TASK !!!")
+    def run(self):
+        logger = log_config("extract", self.current_timestamp)
+        logger.info("==================================STARTING EXTRACT DATA=======================================")
         
-        logging.info("==================================ENDING EXTRACT DATA=======================================")
-                
-    def output(self):
-        outputs = []
-        for table_name in self.tables_to_extract:
-            outputs.append(luigi.LocalTarget(f'{DIR_TEMP_DATA}/{table_name}.csv'))
+        try:
+            start_time = time.time()    
+
+            src_conn = src_db_connection()
             
-        outputs.append(luigi.LocalTarget(f'{DIR_TEMP_DATA}/extract-summary.csv'))
+            for table in tables:
+                df = pd.read_sql_query(f"SELECT * FROM {table}", src_conn)
+                df.to_csv(f"{ROOT_DIR}/data_source/data_extract/{table}.csv", index=False)
+
+                logger.info(f"EXTRACT '{table}' - SUCCESS")
             
-        outputs.append(luigi.LocalTarget(f'{DIR_TEMP_LOG}/logs.log'))
-        return outputs
+            src_conn.dispose()
+
+            logger.info("EXTRACT ALL TABLES - DONE")
+
+            end_time = time.time()
+            exe_time = end_time - start_time
+
+            summary_data = {
+                "timestamp": [datetime.datetime.now()],
+                "task": ["Extract"],
+                "status": ["Success"],
+                "execution_time": [exe_time]
+            }
+            summary = pd.DataFrame(summary_data)
+            summary.to_csv(f"{ROOT_DIR}/summary_pipeline.csv", index=False, mode="a")
+        except Exception as e:
+            logger.error(f"EXTRACT ALL TABLES - FAILED: {e}\n{traceback.format_exc()}")
+
+            summary_data = {
+                "timestamp": [datetime.datetime.now()],
+                "task": ["Extract"],
+                "status": ["Failed"],
+                "execution_time": [0]
+            }
+            summary = pd.DataFrame(summary_data)
+            summary.to_csv(f"{ROOT_DIR}/summary_pipeline.csv", index=False, mode="a")
+        
+        logger.info("==================================ENDING EXTRACT DATA=======================================")
+
+    def output(self) -> luigi.LocalTarget:
+        return luigi.LocalTarget(f"{ROOT_DIR}/log/task_timestamp/extract_{self.current_timestamp}.log")

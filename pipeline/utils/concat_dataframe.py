@@ -1,9 +1,6 @@
 import pandas as pd
-from dotenv import load_dotenv
 import os
-
-# Define root dir project
-ROOT_DIR = os.getenv("DIR_ROOT_PROJECT")
+from root_dir import ROOT_DIR
 
 def concat_dataframes(df1, df2):
     """
