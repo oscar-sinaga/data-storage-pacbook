@@ -10,8 +10,6 @@ from .utils.log_config import log_config
 from .utils.root_dir import ROOT_DIR
 import logging
 
-class GlobalParams(luigi.Config):
-    CurrentTimestampParams = luigi.DateSecondParameter(default=datetime.datetime.now())
 
 class DbtTask(luigi.Task):
     command = luigi.Parameter()
@@ -30,7 +28,7 @@ class DbtTask(luigi.Task):
 
             with open(f"{ROOT_DIR}/logs/transform/transform_{self.current_timestamp}.log", "a") as f:
                 sp.run(
-                    f"cd ./dwh_dbt/ && dbt {self.command}",
+                    f"cd {DIR_DBT_TRANSFORM} && dbt {self.command}",
                     stdout=f,
                     stderr=sp.PIPE,
                     text=True,
@@ -50,8 +48,9 @@ class DbtTask(luigi.Task):
                 "execution_time": [exe_time]
             }
             summary = pd.DataFrame(summary_data)
-            summary.to_csv(self.output().path, index=False, mode="a")
-        except Exception as e:
+            summary.to_csv(f"{ROOT_DIR}/summary_pipeline.csv", index=False, mode="a")
+        # except Exception as e:
+        except:
             logger.error(f"DBT {(self.command).upper()} - FAILED\n{traceback.format_exc()}")
 
             summary_data = {
@@ -61,7 +60,7 @@ class DbtTask(luigi.Task):
                 "execution_time": [0]
             }
             summary = pd.DataFrame(summary_data)
-            summary.to_csv(self.output().path, index=False, mode="a")
+            summary.to_csv(f"{ROOT_DIR}/summary_pipeline.csv", index=False, mode="a")
         
         logger.info(f"==================================ENDING TRANSFORM DATA - DBT {(self.command).upper()}=======================================")
     

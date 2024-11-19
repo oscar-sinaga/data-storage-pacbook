@@ -8,9 +8,6 @@ from .utils.log_config import log_config
 from .utils.tables_src import tables
 from .utils.root_dir import ROOT_DIR
 
-# class GlobalParams(luigi.Config):
-#     CurrentTimestampParams = luigi.DateSecondParameter(default=datetime.datetime.now())
-
 class Extract(luigi.Task):
     
    # Definisikan parameter

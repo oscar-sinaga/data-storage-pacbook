@@ -51,27 +51,18 @@ class Load(luigi.Task):
         try:
             start_time = time.time()
 
-            dfs = []
-
             for table in tables:
-                df = pd.read_csv(f"./src/data/{table}.csv")
-                dfs.append(df)
-
-                logger.info(f"READ '{table}' - SUCCESS")
-            
-            logger.info("READ EXTRACTED TABLES - SUCCESS")
-
-            for index, df in enumerate(dfs):
+                df = pd.read_csv(f"{ROOT_DIR}/data_source/data_extract/{table}.csv")
                 df.to_sql(
-                    name=tables[index],
+                    name=table,
                     con=dwh_conn,
                     schema="pacbook_src",
                     if_exists="append",
                     index=False
                 )
+                logger.info(f"LOAD '{table}' - SUCCESS")
 
-                logger.info(f"LOAD '{tables[index]}' - SUCCESS")
-            
+                
             logger.info("LOAD ALL DATA - SUCCESS")
 
             end_time = time.time()
