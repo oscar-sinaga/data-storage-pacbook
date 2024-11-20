@@ -14,6 +14,14 @@ models:
         description: "Natural key for customer ID"
         tests:
           - not_null
+      - name: first_name
+        description: "First name of the customer"
+        tests:
+          - not_null
+      - name: last_name
+        description: "Last name of the customer"
+        tests:
+          - not_null
       - name: full_name
         description: "Full name of the customer"
         tests:
@@ -50,6 +58,10 @@ models:
         description: "Publication date of the book"
         tests:
           - not_null
+      - name: author
+        description: "Author of the book"
+        tests:
+          - not_null
       - name: language
         description: "Language of the book"
         tests:
@@ -73,7 +85,7 @@ models:
     description: "Fact table for book orders"
     columns:
       - name: sk_order_id
-        description: "Surrogate key for order ID"
+        description: "Surrogate key for book order ID"
         tests:
           - unique
           - not_null
@@ -169,6 +181,12 @@ models:
               pk_column_name: sk_book_id
       - name: total_order
         description: "Total number of orders placed by the customer."
+        tests:
+          - not_null
+          - greater_than:
+              min_value: 0
+      - name: total_sale_amount
+        description: "Total sale amount of orders placed by the customer."
         tests:
           - not_null
           - greater_than:
