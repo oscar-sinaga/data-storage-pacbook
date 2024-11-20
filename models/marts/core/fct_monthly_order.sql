@@ -1,3 +1,6 @@
+{ config(schema='pacbook_dwh') }
+
+
 WITH stg_monthly_order AS (
     SELECT
         EXTRACT(MONTH FROM order_date::date) AS month,

@@ -1,3 +1,6 @@
+{ config(schema='pacbook_dwh') }
+
+
 stg_address AS (
     SELECT *
     FROM {{ ref("stg_pacbook_address") }}

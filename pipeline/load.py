@@ -62,7 +62,7 @@ class Load(luigi.Task):
                 )
                 logger.info(f"LOAD '{table}' - SUCCESS")
 
-                
+            dwh_conn.dispose()    
             logger.info("LOAD ALL DATA - SUCCESS")
 
             end_time = time.time()

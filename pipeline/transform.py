@@ -28,7 +28,7 @@ class DbtTask(luigi.Task):
 
             with open(f"{ROOT_DIR}/logs/transform/transform_{self.current_timestamp}.log", "a") as f:
                 sp.run(
-                    f"cd {DIR_DBT_TRANSFORM} && dbt {self.command}",
+                    f"cd {ROOT_DIR}/pacbook_dwh/ && dbt {self.command}",
                     stdout=f,
                     stderr=sp.PIPE,
                     text=True,

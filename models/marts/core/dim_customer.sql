@@ -1,3 +1,5 @@
+{ config(schema='pacbook_dwh') }
+
 WITH stg_customer AS (
     SELECT customer_id AS nk_customer_id,
         first_name,

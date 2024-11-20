@@ -1,3 +1,5 @@
+{ config(schema='pacbook_dwh') }
+
 WITH stg_author AS (
     SELECT *
     FROM { { ref("stg_pacbook_author") } }
