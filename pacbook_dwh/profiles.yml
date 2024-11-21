@@ -1,0 +1,12 @@
+pacbook_dwh:
+  outputs:
+    dev:
+      dbname: pacbook_dwh
+      host: localhost
+      pass: mypassword
+      port: 5438
+      schema: pacbook_dwh
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev
