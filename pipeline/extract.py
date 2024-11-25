@@ -63,3 +63,6 @@ class Extract(luigi.Task):
 
     def output(self) -> luigi.LocalTarget:
         return luigi.LocalTarget(f"{ROOT_DIR}/log/task_timestamp/extract_{self.current_timestamp}.log")
+    
+if __name__ == "__main__":
+    luigi.run()

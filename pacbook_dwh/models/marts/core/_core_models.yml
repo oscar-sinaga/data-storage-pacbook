@@ -119,7 +119,8 @@ models:
         description: "Price of the ordered book"
         tests:
           - not_null
-          - greater_than: 0
+          - greater_than:
+              min_value: 0
       - name: shipping_method
         description: "Shipping method of the order"
         tests:
@@ -193,8 +194,8 @@ models:
               min_value: 0
 
   - name: fct_order_repeat_time
-  description: "Fact table to measure intervals between repeat orders for each customer"
-  columns:
+    description: "Fact table to measure intervals between repeat orders for each customer"
+    columns:
     - name: sk_order_repeat_time_id
       description: "Surrogate key uniquely identifying each record in fct_order_repeat_time"
       tests:

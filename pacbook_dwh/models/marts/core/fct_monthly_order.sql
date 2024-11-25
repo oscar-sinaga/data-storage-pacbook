@@ -1,4 +1,4 @@
-{ config(schema='pacbook_dwh') }
+{{ config(schema='pacbook_dwh') }}
 
 
 WITH stg_monthly_order AS (

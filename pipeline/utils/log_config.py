@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from root_dir import ROOT_DIR
+from .root_dir import ROOT_DIR
 import os
 
 # Fungsi untuk konfigurasi logger
@@ -37,31 +37,31 @@ def log_config(task: str, timestamp: str):
 
     return logger
 
-# Konfigurasi logger
-task_name = "extract"
-timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-logger = log_config(task_name, timestamp)
+# # Konfigurasi logger
+# task_name = "extract"
+# timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+# logger = log_config(task_name, timestamp)
 
-# Menulis log - akan muncul di file dan terminal
-logger.info("This log entry will appear in the terminal and be saved to the file.")
-logger.error("This is an error log example.")
+# # Menulis log - akan muncul di file dan terminal
+# logger.info("This log entry will appear in the terminal and be saved to the file.")
+# logger.error("This is an error log example.")
 
-#########################################
-# Konfigurasi logger
-task_name = "load"
-timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-logger = log_config(task_name, timestamp)
+# #########################################
+# # Konfigurasi logger
+# task_name = "load"
+# timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+# logger = log_config(task_name, timestamp)
 
-# Menulis log - akan muncul di file dan terminal
-logger.info("This log entry will appear in the terminal and be saved to the file.")
-logger.error("This is an error log example.")
+# # Menulis log - akan muncul di file dan terminal
+# logger.info("This log entry will appear in the terminal and be saved to the file.")
+# logger.error("This is an error log example.")
 
-#######################################
-# Konfigurasi logger
-task_name = "transform"
-timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-logger = log_config(task_name, timestamp)
+# #######################################
+# # Konfigurasi logger
+# task_name = "transform"
+# timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+# logger = log_config(task_name, timestamp)
 
-# Menulis log - akan muncul di file dan terminal
-logger.info("This log entry will appear in the terminal and be saved to the file.")
-logger.error("This is an error log example.")
+# # Menulis log - akan muncul di file dan terminal
+# logger.info("This log entry will appear in the terminal and be saved to the file.")
+# logger.error("This is an error log example.")

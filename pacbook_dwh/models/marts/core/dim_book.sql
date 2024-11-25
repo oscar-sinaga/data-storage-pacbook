@@ -1,4 +1,4 @@
-{ config(schema='pacbook_dwh') }
+{{ config(schema='pacbook_dwh') }}
 
 WITH stg_author AS (
     SELECT *
@@ -20,7 +20,7 @@ stg_book_author AS (
 ),
 stg_book_language AS (
     SELECT *
-    FROM { { ref("stg_pacbook_language") } }
+    FROM { { ref("stg_pacbook_book_language") } }
 ),
 stg_publisher AS (
     SELECT *

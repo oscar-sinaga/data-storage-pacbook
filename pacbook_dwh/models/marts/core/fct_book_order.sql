@@ -1,5 +1,4 @@
-{ config(schema='pacbook_dwh') }
-
+{{ config(schema='pacbook_dwh') }}
 
 stg_address AS (
     SELECT *
